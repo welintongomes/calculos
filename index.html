@@ -331,7 +331,7 @@
 
         <div class="content">
             <div class="tabs">
-                
+
                 <button class="tab active" onclick="switchTab('saved')">Calculadoras</button>
                 <button class="tab" onclick="switchTab('create')">Criar Nova</button>
             </div>
@@ -379,12 +379,7 @@
 
             <!-- ABA: Calculadoras Salvas -->
             <div id="saved-tab" class="tab-content active">
-                <div style="margin-bottom: 20px; display: flex; gap: 10px;">
-                    <button class="btn" onclick="exportCalculators()">📤 Exportar</button>
-                    <button class="btn" onclick="document.getElementById('import-file').click()">📥 Importar</button>
-                    <input type="file" id="import-file" accept=".json" style="display: none;"
-                        onchange="importCalculators(event)">
-                </div>
+
                 <!-- ADICIONAR ESTA SEÇÃO AQUI -->
                 <div style="position: relative; margin-bottom: 25px;">
                     <input type="text" id="search-bar" placeholder="🔍 Buscar calculadora pelo nome..."
@@ -403,6 +398,13 @@
                         </svg>
                         <p>Nenhuma calculadora salva ainda.<br>Crie sua primeira calculadora!</p>
                     </div>
+                </div>
+                <div
+                    style="margin-bottom: 20px; display: flex; gap: 10px; justify-content: space-between; margin-top: 15px;">
+                    <button class="btn" onclick="exportCalculators()">📤 Exportar</button>
+                    <button class="btn" onclick="document.getElementById('import-file').click()">📥 Importar</button>
+                    <input type="file" id="import-file" accept=".json" style="display: none;"
+                        onchange="importCalculators(event)">
                 </div>
             </div>
         </div>
@@ -589,7 +591,7 @@
             const savedValues = JSON.parse(localStorage.getItem(`calc-${calc.id}-values`) || '{}');
 
             listElement.innerHTML = `
-        <div style="max-width: 600px; margin: 0 auto;">
+        <div style="max-width: 600px; margin: 0;">
             <button class="btn" onclick="loadCalculators()" style="margin-bottom: 20px;">← Voltar</button>
             <h2 style="color: #667eea; margin-bottom: 10px;">${calc.name}</h2>
             <p style="color: #666; margin-bottom: 20px;">${calc.description || ''}</p>
