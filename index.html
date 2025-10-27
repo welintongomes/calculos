@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Universal</title>
+    <title>Calculadora de Fórmulas</title>
     <style>
         * {
             margin: 0;
@@ -22,8 +23,8 @@
             max-width: 900px;
             margin: 0 auto;
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
         }
 
@@ -34,41 +35,41 @@
             text-align: center;
         }
 
-        h1 {
+        .header h1 {
             font-size: 2em;
             margin-bottom: 10px;
         }
 
+        .content {
+            padding: 30px;
+        }
+
         .tabs {
             display: flex;
-            background: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
         }
 
         .tab {
-            flex: 1;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
+            padding: 12px 24px;
+            background: none;
             border: none;
-            background: transparent;
+            cursor: pointer;
             font-size: 16px;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
         }
 
         .tab:hover {
-            background: #e9ecef;
+            color: #667eea;
         }
 
         .tab.active {
-            background: white;
             color: #667eea;
-            border-bottom: 3px solid #667eea;
-        }
-
-        .content {
-            padding: 30px;
+            border-bottom-color: #667eea;
+            font-weight: 600;
         }
 
         .tab-content {
@@ -77,24 +78,19 @@
 
         .tab-content.active {
             display: block;
+            animation: fadeIn 0.3s;
         }
 
-        .novo-calculo-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-            width: 100%;
-            margin-bottom: 30px;
-        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
 
-        .novo-calculo-btn:hover {
-            transform: translateY(-2px);
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .form-group {
@@ -108,618 +104,742 @@
             color: #333;
         }
 
-        input, textarea {
+        input,
+        textarea,
+        select {
             width: 100%;
             padding: 12px;
-            border: 2px solid #dee2e6;
+            border: 2px solid #e0e0e0;
             border-radius: 8px;
-            font-size: 16px;
-            transition: border 0.3s;
-            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
         }
 
         textarea {
             resize: vertical;
             min-height: 80px;
+            font-family: 'Courier New', monospace;
         }
 
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .campos-container {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .campo-item {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-            align-items: flex-end;
-        }
-
-        .campo-item input {
-            flex: 1;
-        }
-
-        .btn-remove {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .btn-add {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-        }
-
-        .btn-primary {
+        .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            padding: 12px 30px;
             border: none;
-            padding: 15px 30px;
             border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s;
-            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .btn-primary:hover {
+        .btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .resultado {
-            margin-top: 20px;
-            padding: 20px;
-            background: #d4edda;
-            border-radius: 8px;
-            border-left: 4px solid #28a745;
+        .btn:active {
+            transform: translateY(0);
         }
 
-        .resultado h3 {
-            color: #155724;
-            margin-bottom: 10px;
+        .btn-danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            margin-left: 10px;
         }
 
-        .resultado-valor {
-            font-size: 2em;
-            font-weight: bold;
-            color: #155724;
-        }
-
-        .formulas-grid {
+        .calculator-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+            gap: 15px;
         }
 
-        .formula-card {
+        .calculator-item {
             background: #f8f9fa;
             padding: 20px;
-            border-radius: 12px;
-            cursor: pointer;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
             transition: all 0.3s;
-            border: 2px solid transparent;
+            cursor: pointer;
         }
 
-        .formula-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        .calculator-item:hover {
             border-color: #667eea;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .formula-card h3 {
+        .calculator-item h3 {
             color: #667eea;
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
-
-        .formula-card p {
-            color: #6c757d;
-            font-size: 0.9em;
             margin-bottom: 8px;
         }
 
-        .formula-card .formula {
+        .calculator-item p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .calculator-item .formula {
             background: white;
-            padding: 8px;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 0.85em;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #333;
             margin-top: 10px;
         }
 
-        .btn-delete-formula {
-            background: #dc3545;
+        .calculator-item .actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .calculator-item .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .input-fields {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9em;
-            margin-top: 10px;
-            width: 100%;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .result-box h3 {
+            margin-bottom: 10px;
+        }
+
+        .result-box .value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .help-text {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #1565c0;
+        }
+
+        .variable-input {
+            background: white;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .variable-input label {
+            color: #667eea;
+            font-size: 14px;
         }
 
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
-            color: #6c757d;
+            padding: 40px;
+            color: #999;
         }
 
         .empty-state svg {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             margin-bottom: 20px;
-            opacity: 0.3;
+            opacity: 0.5;
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+        #search-bar {
+            transition: all 0.3s;
         }
 
-        .modal.active {
-            display: flex;
+        #search-bar:focus {
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
         }
 
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-header h2 {
+        #clear-search-btn:hover {
             color: #667eea;
+            background: #f0f0f0;
+            border-radius: 50%;
         }
-
-        .btn-close {
-            background: none;
-            border: none;
-            font-size: 2em;
-            cursor: pointer;
-            color: #6c757d;
-            padding: 0;
-            width: auto;
-        }
-
-        .historico-item {
-            background: #f8f9fa;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-
-        .historico-item h4 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .historico-valores {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .historico-valores div {
-            background: white;
-            padding: 8px;
-            border-radius: 4px;
-        }
-
-        .historico-valores strong {
-            display: block;
-            font-size: 0.85em;
-            color: #6c757d;
-            margin-bottom: 3px;
-        }
-
-        .historico-item small {
-            color: #6c757d;
-            display: block;
-            margin-top: 10px;
-        }
-
-        .btn-delete-historico {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85em;
-            margin-top: 10px;
-        }
+        .help-text code {
+    background: rgba(102, 126, 234, 0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    color: #667eea;
+    font-weight: 600;
+}
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
-            <h1>🧮 Calculadora Universal</h1>
-            <p>Crie suas próprias fórmulas de cálculo</p>
-        </div>
-
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('formulas')">Minhas Fórmulas</button>
-            <button class="tab" onclick="showTab('historico')">Histórico</button>
+            <h1>📐 Calculadora de Fórmulas</h1>
+            <p>Crie e salve suas calculadoras personalizadas</p>
         </div>
 
         <div class="content">
-            <!-- ABA FÓRMULAS -->
-            <div id="formulas" class="tab-content active">
-                <button class="novo-calculo-btn" onclick="abrirModalNovaFormula()">
-                    ➕ Nova Fórmula de Cálculo
-                </button>
-
-                <div id="listaFormulas" class="formulas-grid"></div>
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('create')">Criar Nova</button>
+                <button class="tab" onclick="switchTab('saved')">Minhas Calculadoras</button>
             </div>
 
-            <!-- ABA HISTÓRICO -->
-            <div id="historico" class="tab-content">
-                <h2 style="margin-bottom: 20px;">Histórico de Cálculos</h2>
-                <div id="listaHistorico"></div>
-            </div>
-        </div>
-    </div>
+            <!-- ABA: Criar Nova Calculadora -->
+            <div id="create-tab" class="tab-content active">
+                <div class="form-group">
+                    <label>Nome da Calculadora</label>
+                    <input type="text" id="calc-name" placeholder="Ex: Cálculo de IMC">
+                </div>
 
-    <!-- MODAL NOVA FÓRMULA -->
-    <div id="modalFormula" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Nova Fórmula</h2>
-                <button class="btn-close" onclick="fecharModal()">&times;</button>
-            </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="calc-description" placeholder="Descreva para que serve esta calculadora"></textarea>
+                </div>
 
-            <div class="form-group">
-                <label>Nome da Fórmula:</label>
-                <input type="text" id="nomeFormula" placeholder="Ex: Gasto de Gasolina, Litros de Óleo">
-            </div>
+                <div class="form-group">
+                    <label>Variáveis (separadas por vírgula)</label>
+                    <input type="text" id="calc-variables" placeholder="Ex: peso, altura, idade">
+                </div>
 
-            <div class="form-group">
-                <label>Descrição (opcional):</label>
-                <textarea id="descricaoFormula" placeholder="Ex: Calcula quanto vou gastar de combustível em uma viagem"></textarea>
-            </div>
+                <div class="form-group">
+                    <label>Fórmula</label>
+                    <textarea id="calc-formula" placeholder="Ex: peso / (altura * altura)"></textarea>
+                    <div class="help-text">
+    <strong>💡 Como escrever fórmulas:</strong><br>
+    • Use parênteses () para definir a ordem: <code>(kmf - kmi) * preço</code><br>
+    • Operadores: <code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>**</code> (potência)<br>
+    • Funções: <code>sqrt(número)</code> <code>abs(número)</code> <code>sin()</code> <code>cos()</code> <code>tan()</code> <code>log()</code><br>
+    <strong>Exemplos:</strong><br>
+    • Combustível: <code>(kmf - kmi) * preço</code><br>
+    • IMC: <code>peso / (altura * altura)</code><br>
+    • Área círculo: <code>3.14159 * raio ** 2</code><br>
+    • Hipotenusa: <code>sqrt(a ** 2 + b ** 2)</code>
+</div>
+                </div>
 
-            <div class="form-group">
-                <label>Campos de Entrada:</label>
-                <div id="camposContainer" class="campos-container"></div>
-                <button class="btn-add" onclick="adicionarCampo()">+ Adicionar Campo</button>
-            </div>
-
-            <div class="form-group">
-                <label>Fórmula de Cálculo:</label>
-                <input type="text" id="formula" placeholder="Ex: {campo1} * {campo2} / {campo3}">
-                <small style="color: #6c757d; margin-top: 5px; display: block;">
-                    Use {campo1}, {campo2}, etc. para referenciar os campos. Operações: + - * /
-                </small>
+                <button class="btn" onclick="saveCalculator()">💾 Salvar Calculadora</button>
             </div>
 
-            <button class="btn-primary" onclick="salvarFormula()">Salvar Fórmula</button>
-        </div>
-    </div>
-
-    <!-- MODAL USAR FÓRMULA -->
-    <div id="modalCalculo" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="tituloCalculo"></h2>
-                <button class="btn-close" onclick="fecharModalCalculo()">&times;</button>
+            <!-- ABA: Calculadoras Salvas -->
+            <div id="saved-tab" class="tab-content">
+                <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+                    <button class="btn" onclick="exportCalculators()">📤 Exportar Todas</button>
+                    <button class="btn" onclick="document.getElementById('import-file').click()">📥 Importar</button>
+                    <input type="file" id="import-file" accept=".json" style="display: none;"
+                        onchange="importCalculators(event)">
+                </div>
+                <!-- ADICIONAR ESTA SEÇÃO AQUI -->
+                <div style="position: relative; margin-bottom: 25px;">
+                    <input type="text" id="search-bar" placeholder="🔍 Buscar calculadora pelo nome..."
+                        style="padding-right: 40px;" oninput="filterCalculators(this.value)">
+                    <button onclick="clearSearch()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); 
+                       background: none; border: none; cursor: pointer; font-size: 20px; 
+                       color: #999; padding: 5px 10px; display: none;" id="clear-search-btn">×</button>
+                </div>
+                <!-- FIM DA ADIÇÃO -->
+                <div id="calculator-list" class="calculator-list">
+                    <div class="empty-state">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        <p>Nenhuma calculadora salva ainda.<br>Crie sua primeira calculadora!</p>
+                    </div>
+                </div>
             </div>
-
-            <div id="camposCalculo"></div>
-
-            <button class="btn-primary" onclick="executarCalculo()">Calcular</button>
-
-            <div id="resultadoCalculo"></div>
         </div>
     </div>
 
     <script>
         let db;
-        let campos = [];
-        let formulaAtual = null;
+        const DB_NAME = 'FormulaCalculatorDB';
+        const STORE_NAME = 'calculators';
 
         // Inicializar IndexedDB
         function initDB() {
-            const request = indexedDB.open('CalculadoraDB', 1);
+            const request = indexedDB.open(DB_NAME, 1);
 
-            request.onerror = () => console.error('Erro ao abrir banco de dados');
-
-            request.onsuccess = (e) => {
-                db = e.target.result;
-                carregarFormulas();
-                carregarHistorico();
+            request.onerror = () => {
+                alert('Erro ao abrir o banco de dados');
             };
 
-            request.onupgradeneeded = (e) => {
-                db = e.target.result;
+            request.onsuccess = (event) => {
+                db = event.target.result;
+                loadCalculators();
+            };
 
-                if (!db.objectStoreNames.contains('formulas')) {
-                    db.createObjectStore('formulas', { keyPath: 'id', autoIncrement: true });
-                }
-
-                if (!db.objectStoreNames.contains('historico')) {
-                    db.createObjectStore('historico', { keyPath: 'id', autoIncrement: true });
+            request.onupgradeneeded = (event) => {
+                db = event.target.result;
+                if (!db.objectStoreNames.contains(STORE_NAME)) {
+                    db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
                 }
             };
         }
 
-        function showTab(tabName) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
+        // Alternar abas
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
             event.target.classList.add('active');
-            document.getElementById(tabName).classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
 
-            if (tabName === 'historico') carregarHistorico();
+            if (tabName === 'saved') {
+                loadCalculators();
+            } else if (tabName === 'create') {
+                resetForm(); // ADICIONAR ESTA LINHA
+            }
         }
 
-        function abrirModalNovaFormula() {
-            campos = [{ nome: '' }];
-            renderizarCampos();
-            document.getElementById('nomeFormula').value = '';
-            document.getElementById('descricaoFormula').value = '';
-            document.getElementById('formula').value = '';
-            document.getElementById('modalFormula').classList.add('active');
-        }
+        // Salvar calculadora
+        function saveCalculator() {
+            const name = document.getElementById('calc-name').value.trim();
+            const description = document.getElementById('calc-description').value.trim();
+            const variables = document.getElementById('calc-variables').value.trim();
+            const formula = document.getElementById('calc-formula').value.trim();
 
-        function fecharModal() {
-            document.getElementById('modalFormula').classList.remove('active');
-        }
-
-        function fecharModalCalculo() {
-            document.getElementById('modalCalculo').classList.remove('active');
-        }
-
-        function adicionarCampo() {
-            campos.push({ nome: '' });
-            renderizarCampos();
-        }
-
-        function removerCampo(index) {
-            campos.splice(index, 1);
-            renderizarCampos();
-        }
-
-        function renderizarCampos() {
-            const container = document.getElementById('camposContainer');
-            container.innerHTML = campos.map((campo, index) => `
-                <div class="campo-item">
-                    <input type="text" 
-                           placeholder="Nome do campo (ex: Distância em km)" 
-                           value="${campo.nome}"
-                           onchange="campos[${index}].nome = this.value">
-                    ${campos.length > 1 ? `<button class="btn-remove" onclick="removerCampo(${index})">✕</button>` : ''}
-                </div>
-            `).join('');
-        }
-
-        function salvarFormula() {
-            const nome = document.getElementById('nomeFormula').value;
-            const descricao = document.getElementById('descricaoFormula').value;
-            const formula = document.getElementById('formula').value;
-
-            if (!nome || !formula || campos.some(c => !c.nome)) {
-                alert('Preencha o nome da fórmula, todos os campos e a fórmula!');
+            if (!name || !variables || !formula) {
+                alert('Por favor, preencha todos os campos obrigatórios');
                 return;
             }
 
-            const transaction = db.transaction(['formulas'], 'readwrite');
-            const store = transaction.objectStore('formulas');
-
-            const formulaObj = {
-                nome,
-                descricao,
-                campos: campos.map(c => c.nome),
+            const calculator = {
+                name,
+                description,
+                variables: variables.split(',').map(v => v.trim()),
                 formula,
-                dataCriacao: new Date().toISOString()
+                createdAt: new Date().toISOString()
             };
 
-            store.add(formulaObj);
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.add(calculator);
 
-            transaction.oncomplete = () => {
-                fecharModal();
-                carregarFormulas();
+            request.onsuccess = () => {
+                alert('Calculadora salva com sucesso!');
+                document.getElementById('calc-name').value = '';
+                document.getElementById('calc-description').value = '';
+                document.getElementById('calc-variables').value = '';
+                document.getElementById('calc-formula').value = '';
+                loadCalculators();
             };
-        }
 
-        function carregarFormulas() {
-            const transaction = db.transaction(['formulas'], 'readonly');
-            const store = transaction.objectStore('formulas');
-            const request = store.getAll();
-
-            request.onsuccess = (e) => {
-                const formulas = e.target.result;
-                const lista = document.getElementById('listaFormulas');
-
-                if (formulas.length === 0) {
-                    lista.innerHTML = `
-                        <div class="empty-state">
-                            <p style="font-size: 1.2em;">📝 Nenhuma fórmula criada ainda</p>
-                            <p>Clique no botão acima para criar sua primeira fórmula!</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                lista.innerHTML = formulas.map(f => `
-                    <div class="formula-card" onclick="abrirFormula(${f.id})">
-                        <h3>${f.nome}</h3>
-                        ${f.descricao ? `<p>${f.descricao}</p>` : ''}
-                        <p><strong>Campos:</strong> ${f.campos.join(', ')}</p>
-                        <div class="formula">${f.formula}</div>
-                        <button class="btn-delete-formula" onclick="event.stopPropagation(); deletarFormula(${f.id})">
-                            Excluir Fórmula
-                        </button>
-                    </div>
-                `).join('');
+            request.onerror = () => {
+                alert('Erro ao salvar calculadora');
             };
         }
 
-        function deletarFormula(id) {
-            if (!confirm('Deseja realmente excluir esta fórmula?')) return;
+        // Carregar calculadoras
+        function loadCalculators() {
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.getAll();
 
-            const transaction = db.transaction(['formulas'], 'readwrite');
-            const store = transaction.objectStore('formulas');
-            store.delete(id);
-
-            transaction.oncomplete = () => carregarFormulas();
-        }
-
-        function abrirFormula(id) {
-            const transaction = db.transaction(['formulas'], 'readonly');
-            const store = transaction.objectStore('formulas');
-            const request = store.get(id);
-
-            request.onsuccess = (e) => {
-                formulaAtual = e.target.result;
-                formulaAtual.id = id;
-                
-                document.getElementById('tituloCalculo').textContent = formulaAtual.nome;
-                
-                const container = document.getElementById('camposCalculo');
-                container.innerHTML = formulaAtual.campos.map((campo, index) => `
-                    <div class="form-group">
-                        <label>${campo}:</label>
-                        <input type="number" id="valor${index}" step="any" placeholder="Digite o valor">
-                    </div>
-                `).join('');
-
-                document.getElementById('resultadoCalculo').innerHTML = '';
-                document.getElementById('modalCalculo').classList.add('active');
+            request.onsuccess = (event) => {
+                const calculators = event.target.result;
+                displayCalculators(calculators);
             };
         }
 
-        function executarCalculo() {
-            const valores = formulaAtual.campos.map((campo, index) => {
-                const valor = parseFloat(document.getElementById(`valor${index}`).value);
-                return { campo, valor };
-            });
+        // Exibir calculadoras
+        // Exibir calculadoras
+        function displayCalculators(calculators) {
+            const listElement = document.getElementById('calculator-list');
 
-            if (valores.some(v => isNaN(v.valor))) {
-                alert('Preencha todos os campos com valores válidos!');
+            if (calculators.length === 0) {
+                listElement.innerHTML = `
+            <div class="empty-state">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                </svg>
+                <p>Nenhuma calculadora salva ainda.<br>Crie sua primeira calculadora!</p>
+            </div>
+        `;
                 return;
             }
 
-            let formula = formulaAtual.formula;
-            valores.forEach((v, index) => {
-                formula = formula.replace(new RegExp(`\\{campo${index + 1}\\}`, 'g'), v.valor);
+            // Ordenar por data de criação (mais recentes primeiro)
+            const sortedCalculators = calculators.sort((a, b) => {
+                const dateA = new Date(a.createdAt || 0);
+                const dateB = new Date(b.createdAt || 0);
+                return dateB - dateA;
             });
 
-            let resultado;
-            try {
-                resultado = eval(formula);
-            } catch (error) {
-                alert('Erro ao calcular a fórmula!');
+            // Mostrar apenas as 3 mais recentes por padrão
+            const searchValue = document.getElementById('search-bar').value.toLowerCase();
+            let displayList = sortedCalculators;
+
+            if (searchValue) {
+                // Se houver busca, mostrar todos os resultados filtrados
+                displayList = sortedCalculators.filter(calc =>
+                    calc.name.toLowerCase().includes(searchValue)
+                );
+            } else {
+                // Se não houver busca, mostrar apenas as 3 últimas
+                displayList = sortedCalculators.slice(0, 3);
+            }
+
+            if (displayList.length === 0) {
+                listElement.innerHTML = `
+            <div class="empty-state">
+                <p>Nenhuma calculadora encontrada com "${searchValue}"</p>
+            </div>
+        `;
                 return;
             }
 
-            // Salvar no histórico
-            const transaction = db.transaction(['historico'], 'readwrite');
-            const store = transaction.objectStore('historico');
+            const showingAll = searchValue !== '';
+            const totalCount = sortedCalculators.length;
 
-            store.add({
-                formulaId: formulaAtual.id,
-                formulaNome: formulaAtual.nome,
-                valores: valores,
-                resultado: resultado,
-                data: new Date().toISOString()
-            });
+            listElement.innerHTML = `
+        ${!showingAll && totalCount > 3 ?
+                    `<div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; color: #1565c0;">
+                Mostrando as 3 calculadoras mais recentes de ${totalCount} no total. Use a busca para encontrar outras.
+            </div>` : ''}
+        ${displayList.map(calc => `
+            <div class="calculator-item">
+                <h3>${calc.name}</h3>
+                <p>${calc.description || 'Sem descrição'}</p>
+                <div class="formula"><strong>Fórmula:</strong> ${calc.formula}</div>
+                <div class="actions">
+                    <button class="btn" onclick="useCalculator(${calc.id})">🧮 Usar</button>
+                    <button class="btn" onclick="editCalculator(${calc.id})">✏️ Editar</button>
+                    <button class="btn btn-danger" onclick="deleteCalculator(${calc.id})">🗑️ Excluir</button>
+                </div>
+            </div>
+        `).join('')}
+    `;
+        }
 
-            transaction.oncomplete = () => {
-                document.getElementById('resultadoCalculo').innerHTML = `
-                    <div class="resultado">
-                        <h3>Resultado</h3>
-                        <div class="resultado-valor">${resultado.toFixed(2)}</div>
-                    </div>
-                `;
+        // Usar calculadora
+        function useCalculator(id) {
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.get(id);
+
+            request.onsuccess = (event) => {
+                const calc = event.target.result;
+                showCalculatorInterface(calc);
             };
         }
 
-        function carregarHistorico() {
-            const transaction = db.transaction(['historico'], 'readonly');
-            const store = transaction.objectStore('historico');
-            const request = store.getAll();
+        // Mostrar interface de cálculo
+        function showCalculatorInterface(calc) {
+            const listElement = document.getElementById('calculator-list');
 
-            request.onsuccess = (e) => {
-                const historico = e.target.result.reverse();
-                const lista = document.getElementById('listaHistorico');
+            listElement.innerHTML = `
+                <div style="max-width: 600px; margin: 0 auto;">
+                    <button class="btn" onclick="loadCalculators()" style="margin-bottom: 20px;">← Voltar</button>
+                    <h2 style="color: #667eea; margin-bottom: 10px;">${calc.name}</h2>
+                    <p style="color: #666; margin-bottom: 20px;">${calc.description || ''}</p>
+                    <div class="formula" style="margin-bottom: 20px;"><strong>Fórmula:</strong> ${calc.formula}</div>
+                    
+                    <div class="input-fields" id="input-fields-${calc.id}">
+                        ${calc.variables.map(variable => `
+                            <div class="variable-input">
+                                <label>${variable}</label>
+                                <input type="number" id="var-${variable}" step="any" placeholder="Digite o valor">
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <button class="btn" onclick="calculate(${calc.id}, ${JSON.stringify(calc.variables).replace(/"/g, '&quot;')}, '${calc.formula.replace(/'/g, "\\'")}')">Calcular</button>
+                    
+                    <div id="result-${calc.id}"></div>
+                </div>
+            `;
+        }
 
-                if (historico.length === 0) {
-                    lista.innerHTML = '<div class="empty-state">Nenhum cálculo realizado</div>';
+        // Calcular resultado
+        // Calcular resultado
+function calculate(id, variables, formula) {
+    const values = {};
+    let allFilled = true;
+
+    variables.forEach(variable => {
+        const input = document.getElementById(`var-${variable}`);
+        const value = parseFloat(input.value);
+        
+        if (isNaN(value)) {
+            allFilled = false;
+        } else {
+            values[variable] = value;
+        }
+    });
+
+    if (!allFilled) {
+        alert('Por favor, preencha todos os campos com números válidos');
+        return;
+    }
+
+    try {
+        // Substituir variáveis na fórmula
+        let processedFormula = formula;
+        
+        // Mostrar a fórmula com os valores substituídos para debug
+        let debugFormula = formula;
+        
+        Object.keys(values).forEach(variable => {
+            const regex = new RegExp('\\b' + variable + '\\b', 'g');
+            processedFormula = processedFormula.replace(regex, values[variable]);
+            debugFormula = debugFormula.replace(regex, `<strong>${values[variable]}</strong>`);
+        });
+
+        // Funções matemáticas disponíveis
+        const sqrt = Math.sqrt;
+        const abs = Math.abs;
+        const sin = Math.sin;
+        const cos = Math.cos;
+        const tan = Math.tan;
+        const log = Math.log;
+        const exp = Math.exp;
+        const pow = Math.pow;
+        const PI = Math.PI;
+
+        // Avaliar fórmula
+        const result = eval(processedFormula);
+
+        // Verificar se o resultado é válido
+        if (!isFinite(result)) {
+            alert('Erro: O resultado não é um número válido. Verifique sua fórmula e os valores inseridos.');
+            return;
+        }
+
+        document.getElementById(`result-${id}`).innerHTML = `
+            <div class="result-box">
+                <h3>Resultado</h3>
+                <div class="value">${result.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                <div style="margin-top: 15px; font-size: 14px; opacity: 0.9;">
+                    Cálculo: ${debugFormula} = ${result.toFixed(2)}
+                </div>
+            </div>
+        `;
+    } catch (error) {
+        alert('Erro ao calcular a fórmula!\n\n' + 
+              'Detalhes: ' + error.message + '\n\n' +
+              'Dicas:\n' +
+              '• Use parênteses para definir ordem: (kmf - kmi) * preço\n' +
+              '• Verifique se os nomes das variáveis estão corretos\n' +
+              '• Use * para multiplicação, não x ou ×');
+    }
+}
+
+        // Deletar calculadora
+        function deleteCalculator(id) {
+            if (!confirm('Tem certeza que deseja excluir esta calculadora?')) {
+                return;
+            }
+
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.delete(id);
+
+            request.onsuccess = () => {
+                alert('Calculadora excluída com sucesso!');
+                loadCalculators();
+            };
+        }
+        // Editar calculadora
+        function editCalculator(id) {
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.get(id);
+
+            request.onsuccess = (event) => {
+                const calc = event.target.result;
+
+                document.getElementById('calc-name').value = calc.name;
+                document.getElementById('calc-description').value = calc.description;
+                document.getElementById('calc-variables').value = calc.variables.join(', ');
+                document.getElementById('calc-formula').value = calc.formula;
+
+                // Mudar para aba de criação
+                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.querySelector('.tab:first-child').classList.add('active');
+                document.getElementById('create-tab').classList.add('active');
+
+                // Modificar botão de salvar para atualizar
+                const saveBtn = document.querySelector('#create-tab .btn');
+                saveBtn.textContent = '💾 Atualizar Calculadora';
+                saveBtn.onclick = () => updateCalculator(id);
+            };
+        }
+
+        // Atualizar calculadora
+        // Atualizar calculadora
+        function updateCalculator(id) {
+            const name = document.getElementById('calc-name').value.trim();
+            const description = document.getElementById('calc-description').value.trim();
+            const variables = document.getElementById('calc-variables').value.trim();
+            const formula = document.getElementById('calc-formula').value.trim();
+
+            if (!name || !variables || !formula) {
+                alert('Por favor, preencha todos os campos obrigatórios');
+                return;
+            }
+
+            // Primeiro, buscar a calculadora existente para preservar o createdAt
+            const getTransaction = db.transaction([STORE_NAME], 'readonly');
+            const getObjectStore = getTransaction.objectStore(STORE_NAME);
+            const getRequest = getObjectStore.get(id);
+
+            getRequest.onsuccess = (event) => {
+                const existingCalc = event.target.result;
+
+                const calculator = {
+                    id,
+                    name,
+                    description,
+                    variables: variables.split(',').map(v => v.trim()),
+                    formula,
+                    createdAt: existingCalc.createdAt, // Preservar data de criação
+                    updatedAt: new Date().toISOString()
+                };
+
+                const transaction = db.transaction([STORE_NAME], 'readwrite');
+                const objectStore = transaction.objectStore(STORE_NAME);
+                const request = objectStore.put(calculator);
+
+                request.onsuccess = () => {
+                    alert('Calculadora atualizada com sucesso!');
+                    resetForm();
+                    // Alternar para aba de salvos
+                    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    document.querySelectorAll('.tab')[1].classList.add('active');
+                    document.getElementById('saved-tab').classList.add('active');
+                    loadCalculators();
+                };
+
+                request.onerror = () => {
+                    alert('Erro ao atualizar calculadora');
+                };
+            };
+
+            getRequest.onerror = () => {
+                alert('Erro ao buscar calculadora para atualização');
+            };
+        }
+        // Resetar formulário
+        function resetForm() {
+            document.getElementById('calc-name').value = '';
+            document.getElementById('calc-description').value = '';
+            document.getElementById('calc-variables').value = '';
+            document.getElementById('calc-formula').value = '';
+
+            const saveBtn = document.querySelector('#create-tab .btn');
+            saveBtn.textContent = '💾 Salvar Calculadora';
+            saveBtn.onclick = saveCalculator;
+        }
+
+        // Exportar calculadoras
+        function exportCalculators() {
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.getAll();
+
+            request.onsuccess = (event) => {
+                const calculators = event.target.result;
+
+                if (calculators.length === 0) {
+                    alert('Nenhuma calculadora para exportar');
                     return;
                 }
 
-                lista.innerHTML = historico.map(h => {
-                    const data = new Date(h.data);
-                    return `
-                        <div class="historico-item">
-                            <h4>${h.formulaNome}</h4>
-                            <div class="historico-valores">
-                                ${h.valores.map(v => `
-                                    <div>
-                                        <strong>${v.campo}</strong>
-                                        ${v.valor}
-                                    </div>
-                                `).join('')}
-                            </div>
-                            <div style="background: #d4edda; padding: 10px; border-radius: 6px; margin-top: 10px;">
-                                <strong style="color: #155724;">Resultado: ${h.resultado.toFixed(2)}</strong>
-                            </div>
-                            <small>${data.toLocaleDateString('pt-BR')} às ${data.toLocaleTimeString('pt-BR')}</small>
-                            <button class="btn-delete-historico" onclick="deletarHistorico(${h.id})">Excluir</button>
-                        </div>
-                    `;
-                }).join('');
+                const dataStr = JSON.stringify(calculators, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `calculadoras_${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+                URL.revokeObjectURL(url);
+
+                alert(`${calculators.length} calculadora(s) exportada(s) com sucesso!`);
             };
         }
 
-        function deletarHistorico(id) {
-            const transaction = db.transaction(['historico'], 'readwrite');
-            const store = transaction.objectStore('historico');
-            store.delete(id);
+        // Importar calculadoras
+        function importCalculators(event) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-            transaction.oncomplete = () => carregarHistorico();
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const calculators = JSON.parse(e.target.result);
+
+                    if (!Array.isArray(calculators)) {
+                        alert('Arquivo inválido');
+                        return;
+                    }
+
+                    const transaction = db.transaction([STORE_NAME], 'readwrite');
+                    const objectStore = transaction.objectStore(STORE_NAME);
+
+                    let imported = 0;
+                    calculators.forEach(calc => {
+                        delete calc.id; // Remove ID para criar novos registros
+                        const request = objectStore.add(calc);
+                        request.onsuccess = () => imported++;
+                    });
+
+                    transaction.oncomplete = () => {
+                        alert(`${imported} calculadora(s) importada(s) com sucesso!`);
+                        loadCalculators();
+                        event.target.value = ''; // Limpar input
+                    };
+
+                } catch (error) {
+                    alert('Erro ao importar arquivo: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+        // Filtrar calculadoras
+        function filterCalculators(searchValue) {
+            const clearBtn = document.getElementById('clear-search-btn');
+
+            // Mostrar/ocultar botão X
+            if (searchValue.trim()) {
+                clearBtn.style.display = 'block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+
+            loadCalculators();
         }
 
+        // Limpar busca
+        function clearSearch() {
+            document.getElementById('search-bar').value = '';
+            document.getElementById('clear-search-btn').style.display = 'none';
+            loadCalculators();
+        }
+
+        // Inicializar ao carregar a página
         window.onload = initDB;
     </script>
 </body>
+
 </html>
