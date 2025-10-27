@@ -331,12 +331,13 @@
 
         <div class="content">
             <div class="tabs">
-                <button class="tab active" onclick="switchTab('create')">Criar Nova</button>
-                <button class="tab " onclick="switchTab('saved')">Calculadoras</button>
+                
+                <button class="tab active" onclick="switchTab('saved')">Calculadoras</button>
+                <button class="tab" onclick="switchTab('create')">Criar Nova</button>
             </div>
 
             <!-- ABA: Criar Nova Calculadora -->
-            <div id="create-tab" class="tab-content active">
+            <div id="create-tab" class="tab-content">
                 <div class="form-group">
                     <label>Nome da Calculadora</label>
                     <input type="text" id="calc-name" placeholder="Ex: Cálculo de IMC">
@@ -377,7 +378,7 @@
             </div>
 
             <!-- ABA: Calculadoras Salvas -->
-            <div id="saved-tab" class="tab-content">
+            <div id="saved-tab" class="tab-content active">
                 <div style="margin-bottom: 20px; display: flex; gap: 10px;">
                     <button class="btn" onclick="exportCalculators()">📤 Exportar</button>
                     <button class="btn" onclick="document.getElementById('import-file').click()">📥 Importar</button>
