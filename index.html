@@ -49,6 +49,7 @@
             gap: 10px;
             margin-bottom: 30px;
             border-bottom: 2px solid #e0e0e0;
+            justify-content: center;
         }
 
         .tab {
@@ -278,14 +279,46 @@
             background: #f0f0f0;
             border-radius: 50%;
         }
+
         .help-text code {
-    background: rgba(102, 126, 234, 0.1);
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-family: 'Courier New', monospace;
-    color: #667eea;
-    font-weight: 600;
-}
+            background: rgba(102, 126, 234, 0.1);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .help-container {
+            width: 100%;
+            /* max-width: 500px; */
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .help-header {
+            text-align: center;
+            background-color: #f3f3f3;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            user-select: none;
+        }
+
+        .help-text {
+            padding: 10px;
+            display: none;
+            /* começa oculta */
+            background-color: #fff;
+        }
+
+        .help-text code {
+            background: #f1f1f1;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
     </style>
 </head>
 
@@ -299,7 +332,7 @@
         <div class="content">
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('create')">Criar Nova</button>
-                <button class="tab" onclick="switchTab('saved')">Minhas Calculadoras</button>
+                <button class="tab " onclick="switchTab('saved')">Calculadoras</button>
             </div>
 
             <!-- ABA: Criar Nova Calculadora -->
@@ -322,17 +355,22 @@
                 <div class="form-group">
                     <label>Fórmula</label>
                     <textarea id="calc-formula" placeholder="Ex: peso / (altura * altura)"></textarea>
-                    <div class="help-text">
-    <strong>💡 Como escrever fórmulas:</strong><br>
-    • Use parênteses () para definir a ordem: <code>(kmf - kmi) * preço</code><br>
-    • Operadores: <code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>**</code> (potência)<br>
-    • Funções: <code>sqrt(número)</code> <code>abs(número)</code> <code>sin()</code> <code>cos()</code> <code>tan()</code> <code>log()</code><br>
-    <strong>Exemplos:</strong><br>
-    • Combustível: <code>(kmf - kmi) * preço</code><br>
-    • IMC: <code>peso / (altura * altura)</code><br>
-    • Área círculo: <code>3.14159 * raio ** 2</code><br>
-    • Hipotenusa: <code>sqrt(a ** 2 + b ** 2)</code>
-</div>
+                    <div class="help-container">
+                        <div class="help-header">💡 Como escrever fórmulas 💡 (clique para expandir/recolher)</div>
+                        <div class="help-text">
+                            <strong>💡 Como escrever fórmulas: </strong><br>
+                            • Use parênteses () para definir a ordem: <code>(kmf - kmi) * preço</code><br>
+                            • Operadores: <code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>**</code>
+                            (potência)<br>
+                            • Funções: <code>sqrt(número)</code> <code>abs(número)</code> <code>sin()</code>
+                            <code>cos()</code> <code>tan()</code> <code>log()</code><br>
+                            <strong>Exemplos:</strong><br>
+                            • Combustível: <code>(kmf - kmi) * preço</code><br>
+                            • IMC: <code>peso / (altura * altura)</code><br>
+                            • Área círculo: <code>3.14159 * raio ** 2</code><br>
+                            • Hipotenusa: <code>sqrt(a ** 2 + b ** 2)</code>
+                        </div>
+                    </div>
                 </div>
 
                 <button class="btn" onclick="saveCalculator()">💾 Salvar Calculadora</button>
@@ -341,7 +379,7 @@
             <!-- ABA: Calculadoras Salvas -->
             <div id="saved-tab" class="tab-content">
                 <div style="margin-bottom: 20px; display: flex; gap: 10px;">
-                    <button class="btn" onclick="exportCalculators()">📤 Exportar Todas</button>
+                    <button class="btn" onclick="exportCalculators()">📤 Exportar</button>
                     <button class="btn" onclick="document.getElementById('import-file').click()">📥 Importar</button>
                     <input type="file" id="import-file" accept=".json" style="display: none;"
                         onchange="importCalculators(event)">
@@ -543,13 +581,13 @@
         }
 
         // Mostrar interface de cálculo
-function showCalculatorInterface(calc) {
-    const listElement = document.getElementById('calculator-list');
-    
-    // ADICIONAR ESTA LINHA - Recuperar valores salvos
-    const savedValues = JSON.parse(localStorage.getItem(`calc-${calc.id}-values`) || '{}');
+        function showCalculatorInterface(calc) {
+            const listElement = document.getElementById('calculator-list');
 
-    listElement.innerHTML = `
+            // ADICIONAR ESTA LINHA - Recuperar valores salvos
+            const savedValues = JSON.parse(localStorage.getItem(`calc-${calc.id}-values`) || '{}');
+
+            listElement.innerHTML = `
         <div style="max-width: 600px; margin: 0 auto;">
             <button class="btn" onclick="loadCalculators()" style="margin-bottom: 20px;">← Voltar</button>
             <h2 style="color: #667eea; margin-bottom: 10px;">${calc.name}</h2>
@@ -572,59 +610,59 @@ function showCalculatorInterface(calc) {
             <div id="result-${calc.id}"></div>
         </div>
     `;
-}
+        }
         // Calcular resultado
         function calculate(id, variables, formula) {
-    const values = {};
-    let allFilled = true;
+            const values = {};
+            let allFilled = true;
 
-    variables.forEach(variable => {
-        const input = document.getElementById(`var-${variable}`);
-        const value = parseFloat(input.value);
-        
-        if (isNaN(value)) {
-            allFilled = false;
-        } else {
-            values[variable] = value;
-        }
-    });
+            variables.forEach(variable => {
+                const input = document.getElementById(`var-${variable}`);
+                const value = parseFloat(input.value);
 
-    if (!allFilled) {
-        alert('Por favor, preencha todos os campos com números válidos');
-        return;
-    }
+                if (isNaN(value)) {
+                    allFilled = false;
+                } else {
+                    values[variable] = value;
+                }
+            });
 
-    // ADICIONAR ESTAS LINHAS - Salvar valores no localStorage
-    localStorage.setItem(`calc-${id}-values`, JSON.stringify(values));
+            if (!allFilled) {
+                alert('Por favor, preencha todos os campos com números válidos');
+                return;
+            }
 
-    try {
-        let processedFormula = formula;
-        let debugFormula = formula;
-        
-        Object.keys(values).forEach(variable => {
-            const regex = new RegExp('\\b' + variable + '\\b', 'g');
-            processedFormula = processedFormula.replace(regex, values[variable]);
-            debugFormula = debugFormula.replace(regex, `<strong>${values[variable]}</strong>`);
-        });
+            // ADICIONAR ESTAS LINHAS - Salvar valores no localStorage
+            localStorage.setItem(`calc-${id}-values`, JSON.stringify(values));
 
-        const sqrt = Math.sqrt;
-        const abs = Math.abs;
-        const sin = Math.sin;
-        const cos = Math.cos;
-        const tan = Math.tan;
-        const log = Math.log;
-        const exp = Math.exp;
-        const pow = Math.pow;
-        const PI = Math.PI;
+            try {
+                let processedFormula = formula;
+                let debugFormula = formula;
 
-        const result = eval(processedFormula);
+                Object.keys(values).forEach(variable => {
+                    const regex = new RegExp('\\b' + variable + '\\b', 'g');
+                    processedFormula = processedFormula.replace(regex, values[variable]);
+                    debugFormula = debugFormula.replace(regex, `<strong>${values[variable]}</strong>`);
+                });
 
-        if (!isFinite(result)) {
-            alert('Erro: O resultado não é um número válido. Verifique sua fórmula e os valores inseridos.');
-            return;
-        }
+                const sqrt = Math.sqrt;
+                const abs = Math.abs;
+                const sin = Math.sin;
+                const cos = Math.cos;
+                const tan = Math.tan;
+                const log = Math.log;
+                const exp = Math.exp;
+                const pow = Math.pow;
+                const PI = Math.PI;
 
-        document.getElementById(`result-${id}`).innerHTML = `
+                const result = eval(processedFormula);
+
+                if (!isFinite(result)) {
+                    alert('Erro: O resultado não é um número válido. Verifique sua fórmula e os valores inseridos.');
+                    return;
+                }
+
+                document.getElementById(`result-${id}`).innerHTML = `
             <div class="result-box">
                 <h3>Resultado</h3>
                 <div class="value">${result.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
@@ -633,15 +671,15 @@ function showCalculatorInterface(calc) {
                 </div>
             </div>
         `;
-    } catch (error) {
-        alert('Erro ao calcular a fórmula!\n\n' + 
-              'Detalhes: ' + error.message + '\n\n' +
-              'Dicas:\n' +
-              '• Use parênteses para definir ordem: (kmf - kmi) * preço\n' +
-              '• Verifique se os nomes das variáveis estão corretos\n' +
-              '• Use * para multiplicação, não x ou ×');
-    }
-}
+            } catch (error) {
+                alert('Erro ao calcular a fórmula!\n\n' +
+                    'Detalhes: ' + error.message + '\n\n' +
+                    'Dicas:\n' +
+                    '• Use parênteses para definir ordem: (kmf - kmi) * preço\n' +
+                    '• Verifique se os nomes das variáveis estão corretos\n' +
+                    '• Use * para multiplicação, não x ou ×');
+            }
+        }
         // Deletar calculadora
         function deleteCalculator(id) {
             if (!confirm('Tem certeza que deseja excluir esta calculadora?')) {
@@ -835,6 +873,12 @@ function showCalculatorInterface(calc) {
             document.getElementById('clear-search-btn').style.display = 'none';
             loadCalculators();
         }
+        const header = document.querySelector('.help-header');
+        const text = document.querySelector('.help-text');
+
+        header.addEventListener('click', () => {
+            text.style.display = text.style.display === 'none' || text.style.display === '' ? 'block' : 'none';
+        });
 
         // Inicializar ao carregar a página
         window.onload = initDB;
