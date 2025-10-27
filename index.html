@@ -543,35 +543,38 @@
         }
 
         // Mostrar interface de cálculo
-        function showCalculatorInterface(calc) {
-            const listElement = document.getElementById('calculator-list');
+function showCalculatorInterface(calc) {
+    const listElement = document.getElementById('calculator-list');
+    
+    // ADICIONAR ESTA LINHA - Recuperar valores salvos
+    const savedValues = JSON.parse(localStorage.getItem(`calc-${calc.id}-values`) || '{}');
 
-            listElement.innerHTML = `
-                <div style="max-width: 600px; margin: 0 auto;">
-                    <button class="btn" onclick="loadCalculators()" style="margin-bottom: 20px;">← Voltar</button>
-                    <h2 style="color: #667eea; margin-bottom: 10px;">${calc.name}</h2>
-                    <p style="color: #666; margin-bottom: 20px;">${calc.description || ''}</p>
-                    <div class="formula" style="margin-bottom: 20px;"><strong>Fórmula:</strong> ${calc.formula}</div>
-                    
-                    <div class="input-fields" id="input-fields-${calc.id}">
-                        ${calc.variables.map(variable => `
-                            <div class="variable-input">
-                                <label>${variable}</label>
-                                <input type="number" id="var-${variable}" step="any" placeholder="Digite o valor">
-                            </div>
-                        `).join('')}
+    listElement.innerHTML = `
+        <div style="max-width: 600px; margin: 0 auto;">
+            <button class="btn" onclick="loadCalculators()" style="margin-bottom: 20px;">← Voltar</button>
+            <h2 style="color: #667eea; margin-bottom: 10px;">${calc.name}</h2>
+            <p style="color: #666; margin-bottom: 20px;">${calc.description || ''}</p>
+            <div class="formula" style="margin-bottom: 20px;"><strong>Fórmula:</strong> ${calc.formula}</div>
+            
+            <div class="input-fields" id="input-fields-${calc.id}">
+                ${calc.variables.map(variable => `
+                    <div class="variable-input">
+                        <label>${variable}</label>
+                        <input type="number" id="var-${variable}" step="any" 
+                               placeholder="Digite o valor" 
+                               value="${savedValues[variable] || ''}">
                     </div>
-                    
-                    <button class="btn" onclick="calculate(${calc.id}, ${JSON.stringify(calc.variables).replace(/"/g, '&quot;')}, '${calc.formula.replace(/'/g, "\\'")}')">Calcular</button>
-                    
-                    <div id="result-${calc.id}"></div>
-                </div>
-            `;
-        }
-
+                `).join('')}
+            </div>
+            
+            <button class="btn" onclick="calculate(${calc.id}, ${JSON.stringify(calc.variables).replace(/"/g, '&quot;')}, '${calc.formula.replace(/'/g, "\\'")}')">Calcular</button>
+            
+            <div id="result-${calc.id}"></div>
+        </div>
+    `;
+}
         // Calcular resultado
-        // Calcular resultado
-function calculate(id, variables, formula) {
+        function calculate(id, variables, formula) {
     const values = {};
     let allFilled = true;
 
@@ -591,11 +594,11 @@ function calculate(id, variables, formula) {
         return;
     }
 
+    // ADICIONAR ESTAS LINHAS - Salvar valores no localStorage
+    localStorage.setItem(`calc-${id}-values`, JSON.stringify(values));
+
     try {
-        // Substituir variáveis na fórmula
         let processedFormula = formula;
-        
-        // Mostrar a fórmula com os valores substituídos para debug
         let debugFormula = formula;
         
         Object.keys(values).forEach(variable => {
@@ -604,7 +607,6 @@ function calculate(id, variables, formula) {
             debugFormula = debugFormula.replace(regex, `<strong>${values[variable]}</strong>`);
         });
 
-        // Funções matemáticas disponíveis
         const sqrt = Math.sqrt;
         const abs = Math.abs;
         const sin = Math.sin;
@@ -615,10 +617,8 @@ function calculate(id, variables, formula) {
         const pow = Math.pow;
         const PI = Math.PI;
 
-        // Avaliar fórmula
         const result = eval(processedFormula);
 
-        // Verificar se o resultado é válido
         if (!isFinite(result)) {
             alert('Erro: O resultado não é um número válido. Verifique sua fórmula e os valores inseridos.');
             return;
@@ -642,7 +642,6 @@ function calculate(id, variables, formula) {
               '• Use * para multiplicação, não x ou ×');
     }
 }
-
         // Deletar calculadora
         function deleteCalculator(id) {
             if (!confirm('Tem certeza que deseja excluir esta calculadora?')) {
