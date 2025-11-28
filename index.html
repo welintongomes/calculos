@@ -319,6 +319,21 @@
             padding: 2px 4px;
             border-radius: 3px;
         }
+
+        /* ⬇️ REGRA PARA TELAS PEQUENAS (Media Query) ⬇️ */
+        @media (max-width: 600px) {
+            .btn {
+                /* Garante que o botão ocupe 100% da largura do elemento pai */
+                width: 100%;
+
+                /* Geralmente é bom remover o padding lateral em 100% de largura */
+                padding-left: 12px;
+                padding-right: 12px;
+
+                /* Garante que o 100% funcione corretamente */
+                display: block;
+            }
+        }
     </style>
 </head>
 
