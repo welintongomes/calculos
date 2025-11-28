@@ -370,6 +370,18 @@
                             • IMC: <code>peso / (altura * altura)</code><br>
                             • Área círculo: <code>3.14159 * raio ** 2</code><br>
                             • Hipotenusa: <code>sqrt(a ** 2 + b ** 2)</code>
+
+                            <h4>🧮 Funções Matemáticas Disponíveis:</h4>
+                            <p><strong>Básicas:</strong> sqrt(x), cbrt(x), abs(x), pow(x,y), round(x), floor(x), ceil(x)
+                            </p>
+                            <p><strong>Trigonométricas:</strong> sin(x), cos(x), tan(x), asin(x), acos(x), atan(x)</p>
+                            <p><strong>Logaritmos:</strong> log(x), log10(x), exp(x)</p>
+                            <p><strong>Comparação:</strong> max(a,b,c), min(a,b,c)</p>
+                            <p><strong>Constantes:</strong> PI, E</p>
+                            <p><strong>Exemplos:</strong><br>
+                                - Área do círculo: <code>PI * pow(raio, 2)</code><br>
+                                - Hipotenusa: <code>sqrt(pow(a, 2) + pow(b, 2))</code><br>
+                                - Maior valor: <code>max(a, b, c)</code></p>
                         </div>
                     </div>
                 </div>
@@ -502,7 +514,6 @@
         }
 
         // Exibir calculadoras
-        // Exibir calculadoras
         function displayCalculators(calculators) {
             const listElement = document.getElementById('calculator-list');
 
@@ -591,7 +602,7 @@
             const savedValues = JSON.parse(localStorage.getItem(`calc-${calc.id}-values`) || '{}');
 
             listElement.innerHTML = `
-        <div style="max-width: 600px; margin: 0;">
+        <div style="margin: 0;">
             <button class="btn" onclick="loadCalculators()" style="margin-bottom: 20px;">← Voltar</button>
             <h2 style="color: #667eea; margin-bottom: 10px;">${calc.name}</h2>
             <p style="color: #666; margin-bottom: 20px;">${calc.description || ''}</p>
@@ -648,15 +659,27 @@
                     debugFormula = debugFormula.replace(regex, `<strong>${values[variable]}</strong>`);
                 });
 
+                // Funções matemáticas disponíveis
                 const sqrt = Math.sqrt;
+                const cbrt = Math.cbrt;
                 const abs = Math.abs;
                 const sin = Math.sin;
                 const cos = Math.cos;
                 const tan = Math.tan;
+                const asin = Math.asin;
+                const acos = Math.acos;
+                const atan = Math.atan;
                 const log = Math.log;
+                const log10 = Math.log10;
                 const exp = Math.exp;
                 const pow = Math.pow;
+                const round = Math.round;
+                const floor = Math.floor;
+                const ceil = Math.ceil;
+                const max = Math.max;
+                const min = Math.min;
                 const PI = Math.PI;
+                const E = Math.E;
 
                 const result = eval(processedFormula);
 
@@ -725,7 +748,6 @@
             };
         }
 
-        // Atualizar calculadora
         // Atualizar calculadora
         function updateCalculator(id) {
             const name = document.getElementById('calc-name').value.trim();
