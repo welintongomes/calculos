@@ -176,8 +176,10 @@
         }
 
         .calculator-item h3 {
+            font-size: 25px;
             color: #667eea;
-            margin-bottom: 8px;
+            margin-bottom: 15px;
+            cursor: pointer;
         }
 
         .calculator-item p {
@@ -370,7 +372,8 @@
 
                 <div class="form-group">
                     <label>Fórmula</label>
-                    <textarea id="calc-formula" placeholder="Ex: peso / (altura * altura)"></textarea>
+                    <textarea id="calc-formula" placeholder="Ex: (kmf - kmi) * preço"
+                        style="font-family: 'Courier New', monospace; min-height: 80px;"></textarea>
                     <div class="help-container">
                         <div class="help-header">💡 Como escrever fórmulas 💡 (clique para expandir/recolher)</div>
                         <div class="help-text">
@@ -584,9 +587,9 @@
             </div>` : ''}
         ${displayList.map(calc => `
             <div class="calculator-item">
-                <h3>${calc.name}</h3>
+                <h3 onclick="useCalculator(${calc.id})">${calc.name}</h3>
                 <p>${calc.description || 'Sem descrição'}</p>
-                <div class="formula"><strong>Fórmula:</strong> ${calc.formula}</div>
+                <div class="formula" onclick="editCalculator(${calc.id})"><strong>Fórmula:</strong> ${calc.formula}</div>
                 <div class="actions">
                     <button class="btn" onclick="useCalculator(${calc.id})">🧮 Usar</button>
                     <button class="btn" onclick="editCalculator(${calc.id})">✏️ Editar</button>
@@ -634,11 +637,22 @@
                 `).join('')}
             </div>
             
-            <button class="btn" onclick="calculate(${calc.id}, ${JSON.stringify(calc.variables).replace(/"/g, '&quot;')}, '${calc.formula.replace(/'/g, "\\'")}')">Calcular</button>
-            
+            <button class="btn" onclick="calculateById(${calc.id})">Calcular</button>
+
             <div id="result-${calc.id}"></div>
         </div>
     `;
+        }
+        // Calcular por ID (evita problemas com quebras de linha no HTML)
+        function calculateById(id) {
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.get(id);
+
+            request.onsuccess = (event) => {
+                const calc = event.target.result;
+                calculate(id, calc.variables, calc.formula);
+            };
         }
         // Calcular resultado
         function calculate(id, variables, formula) {
@@ -666,6 +680,9 @@
 
             try {
                 let processedFormula = formula;
+                // Remover quebras de linha e espaços extras
+                processedFormula = processedFormula.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+
                 let debugFormula = formula;
 
                 Object.keys(values).forEach(variable => {
